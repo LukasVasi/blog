@@ -1,0 +1,81 @@
+﻿@using Blog.MVC.ViewModels.Admin
+@model AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Administration dashboard";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <h6 class="text-muted">Users</h6>
+                <h2>@Model.TotalUsers</h2>
+                <a asp-controller="Admin" asp-action="UserIndex" class="btn btn-sm btn-outline-primary">
+                    Manage users
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <h6 class="text-muted">Reported comments</h6>
+                <h2 class="text-warning">@Model.ReportedCommentsCount</h2>
+                <a asp-controller="Admin" 
+                    asp-action="CommentIndex"
+                    class="btn btn-sm btn-outline-warning">
+                    Moderate
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <h6 class="text-muted">Hidden comments</h6>
+                <h2>@Model.HiddenCommentsCount</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <strong>Recent reports</strong>
+    </div>
+
+    <div class="list-group list-group-flush">
+        @if (!Model.RecentlyReportedComments.Any())
+        {
+            <div class="list-group-item text-muted text-center">
+                No recent reports 🎉
+            </div>
+        }
+        else
+        {
+            @foreach (var report in Model.RecentlyReportedComments)
+            {
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>
+                        “@report.PreviewText”
+                        <small class="text-muted ms-2">
+                            (@report.ReportCount reports)
+                        </small>
+                    </span>
+
+                    <a asp-action="CommentDetails"
+                       asp-controller="Admin"
+                       asp-route-commentId="@report.CommentId"
+                       class="btn btn-sm btn-outline-secondary">
+                        View
+                    </a>
+                </div>
+            }
+        }
+    </div>
+</div>

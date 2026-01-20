@@ -1,0 +1,25 @@
+﻿@if (TempData["Success"] != null)
+{
+    <div 
+        class="alert alert-success alert-dismissible fade show" 
+        role="alert"
+        data-autodismiss="true"
+        data-autodismiss-delay="3000"
+    >
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div 
+        class="alert alert-danger alert-dismissible fade show" 
+        role="alert"
+        data-autodismiss="true"
+        data-autodismiss-delay="5000"
+    >
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}

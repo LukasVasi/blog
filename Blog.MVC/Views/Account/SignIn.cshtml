@@ -1,0 +1,36 @@
+﻿@using Blog.MVC.ViewModels.Account;
+@model SignInViewModel;
+
+@{
+    ViewData["Title"] = "Sign in";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <form method="post" asp-controller="Account" asp-action="SignIn">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group mb-3">
+                <label asp-for="Username">Username</label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Password">Password</label>
+                <input asp-for="Password" class="form-control" type="password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <input asp-for="ReturnUrl" type="hidden" value=@Model.ReturnUrl>
+            <button type="submit" class="btn btn-primary">Sign in</button>
+            <div class="row">
+                <a asp-controller="Account" asp-action="ForgotPassword">Forgot password?</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

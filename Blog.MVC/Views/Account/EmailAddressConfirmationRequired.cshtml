@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Sign up successful";
+}
+
+<div class="text-center">
+    <p>Your <strong>account has been successfully created</strong> and now you can sign in! But before you can use the application, you will need to <strong>confirm your email address</strong>.</p>
+    <p>
+        If your confirmation is <strong>missing</strong>, has <strong>expired</strong> or if you have decided to use a <strong>different email address</strong>,
+        you can sign in and <strong>request a new email confirmation</strong> <a asp-controller="Account" asp-action="SendEmailAddressConfirmation">here</a>.
+    </p>
+    <p>
+        If you have already confirmed your email address you can <strong>sign in</strong> <a asp-controller="Account" asp-action="SignIn">here</a>.
+    </p>
+</div>

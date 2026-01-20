@@ -1,0 +1,43 @@
+﻿@using Blog.MVC.ViewModels.Account.Profile
+@model ProfileViewModel;
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="form-group mb-3">
+                <label asp-for="EmailAddress">Email address</label>
+                <input asp-for="EmailAddress" class="form-control" disabled />
+            </div>
+            <a asp-controller="Account" asp-action="UpdateEmailAddress">Change email address</a>
+        </div>
+        <div class="row">
+            <div class="form-group mb-3">
+                <label asp-for="Username">Username</label>
+                <input asp-for="Username" class="form-control" disabled />
+            </div>
+            <a asp-controller="Account" asp-action="UpdateUsername">Change username</a>
+        </div>
+        <div class="row">
+            <a asp-controller="Account" asp-action="UpdatePassword">Change password</a>
+        </div>
+        @if ((User.Identity?.IsAuthenticated ?? false) && User.IsInRole("Editor"))
+        {
+            <div class="row">
+                <a asp-controller="Articles" asp-action="Index" asp-route-authorId=@Model.Id>View your articles</a>
+            </div>
+        }
+        <label asp-for="UserRoles" class="form-label">Assigned roles</label>
+        <ul class="border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+            @foreach (var userRole in Model.UserRoles)
+            {
+                <li>@userRole.ToString()</li>
+            }
+        </ul>
+    </div>
+</div>

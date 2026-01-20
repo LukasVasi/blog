@@ -1,0 +1,40 @@
+﻿@using Blog.MVC.ViewModels.Admin;
+@model AdminUserDetailsViewModel;
+
+@{
+    ViewData["Title"] = $"{Model.Username} profile";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="form-group mb-3">
+                <label asp-for="EmailAddress">Email address</label>
+                @if(Model.EmailAddress == null)
+                {
+                    <p>User has no confirmed email address</p>
+                }
+                else
+                {
+                    <input asp-for="EmailAddress" class="form-control" disabled />
+                }
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group mb-3">
+                <label asp-for="Username">Username</label>
+                <input asp-for="Username" class="form-control" disabled />
+            </div>
+        </div>
+        <label asp-for="UserRoles" class="form-label">Assigned roles</label>
+        <ul class="border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+            @foreach (var userRole in Model.UserRoles)
+            {
+                <li>@userRole.ToString()</li>
+            }
+        </ul>
+        <a asp-controller="Admin" asp-action="UpdateUserRoles" asp-route-userId=@Model.Id">Change user roles</a>
+    </div>
+</div>

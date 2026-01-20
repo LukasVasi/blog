@@ -1,0 +1,57 @@
+﻿@using Blog.MVC.ViewModels.Articles
+@model ArticlePreviewViewModel
+
+<article class="card shadow-sm h-100">
+    <div class="card-body">
+        <div class="row align-items-start">
+            <div class="col">
+                <div class="d-flex flex-row align-items-center mb-4">
+                    <h2 class="h5 card-title mb-0 me-auto">
+                        <a asp-controller="Articles"
+                           asp-action="Details"
+                           asp-route-id="@Model.Id"
+                           class="text-decoration-none link-dark">
+                            @Model.Title
+                        </a>
+                    </h2>
+
+                    @{
+                        var ratingClass = Model.Rating > 0
+                        ? "text-success"
+                        : Model.Rating < 0
+                        ? "text-danger"
+                        : "text-muted";
+
+                        var icon = Model.Rating > 0
+                        ? "bi-hand-thumbs-up"
+                        : Model.Rating < 0
+                        ? "bi-hand-thumbs-down"
+                        : "bi-dash-circle";
+                    }
+
+                    <span class="@ratingClass ms-2">
+                        <i class="bi @icon"></i>
+                        @Model.Rating
+                    </span>
+
+                    <span class="text-muted ms-2">
+                        <i class="bi bi-chat-left"></i> @Model.CommentCount
+                    </span>
+                </div>
+
+                <div class="d-flex justify-content-between text-muted small">
+                    <span>
+                        By
+                        <a asp-controller="Articles"
+                           asp-action="Index"
+                           asp-route-authorId="@Model.AuthorId"
+                           class="text-decoration-none">
+                            @Model.AuthorUsername
+                        </a>
+                    </span>
+                    <span>@Model.CreatedAt.ToString("yyyy-MM-dd")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>

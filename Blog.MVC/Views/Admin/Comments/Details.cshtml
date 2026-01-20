@@ -1,0 +1,125 @@
+﻿@using Blog.MVC.ViewModels.Admin
+@model AdminCommentDetailsViewModel
+
+@{
+    ViewData["Title"] = "Comment moderation";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <strong>Comment</strong>
+
+                @if (Model.IsHidden)
+                {
+                    <span class="badge bg-secondary">Hidden</span>
+                }
+                else
+                {
+                    <span class="badge bg-success">Visible</span>
+                }
+            </div>
+
+            <div class="card-body">
+                <p class="mb-3" style="white-space: pre-line;">
+                    @Model.Text
+                </p>
+
+                <div class="text-muted small">
+                    By <a asp-controller="Admin"
+                          asp-action="UserDetails"
+                          asp-route-userId="@Model.CommentatorId"
+                          target="_blank"
+                          class="text-decoration-none">
+                        @Model.CommentatorUsername
+                    </a>
+                    · @Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")
+                    · On article
+                    <a asp-controller="Articles"
+                       asp-action="Details"
+                       asp-route-id="@Model.ArticleId"
+                       target="_blank"
+                       class="text-decoration-none">
+                        @Model.ArticleTitle
+                    </a>
+                </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-end">
+                <form asp-controller="Admin"
+                      asp-action="UpdateCommentHidden"
+                      asp-route-commentId="@Model.CommentId"
+                      method="post"
+                      onsubmit="return confirm('Are you sure?');">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="isHidden"
+                           value="@((!Model.IsHidden).ToString())" />
+
+                    @if (Model.IsHidden)
+                    {
+                        <button type="submit" class="btn btn-success">
+                            Unhide comment
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-danger">
+                            Hide comment
+                        </button>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <strong>Reports</strong>
+                <span class="text-muted">(@Model.Reports.Count)</span>
+            </div>
+
+            <div class="list-group list-group-flush">
+                @if (!Model.Reports.Any())
+                {
+                    <div class="list-group-item text-muted text-center">
+                        No reports found.
+                    </div>
+                }
+                else
+                {
+                    @foreach (var report in Model.Reports)
+                    {
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <strong>@report.ReporterUsername</strong>
+                                <small class="text-muted">
+                                    @report.CreatedAt.ToString("yyyy-MM-dd HH:mm")
+                                </small>
+                            </div>
+
+                            <div class="mt-1">
+                                <span class="badge bg-warning text-dark me-2">
+                                    @report.Reason
+                                </span>
+
+                                @if (!string.IsNullOrWhiteSpace(report.Description))
+                                {
+                                    <span class="text-muted">
+                                        @report.Description
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

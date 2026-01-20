@@ -1,0 +1,188 @@
+﻿@using System.Security.Claims
+@using Blog.Domain.Enums
+@using Blog.MVC.ViewModels.Articles
+@model ArticleCommentPartialViewModel
+
+@{
+    var authenticatedUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var isAuthenticated = authenticatedUserId != null;
+
+    var isCommentator =
+        isAuthenticated &&
+        authenticatedUserId == Model.Comment.CommentatorId.ToString() &&
+        User.IsInRole("Commentator");
+
+    var alreadyReported = 
+        isAuthenticated &&
+        Model.ReporterIds.Any(reporterId => reporterId.ToString() == authenticatedUserId);
+
+    var canReport =
+        isAuthenticated &&
+        !isCommentator &&
+        !alreadyReported;
+}
+
+<div class="border rounded p-3 mb-3" id="comment-@Model.Comment.Id">
+    <div class="d-flex justify-content-between align-items-center mb-1">
+        <strong>@Model.Comment.CommentatorUsername</strong>
+
+        <div class="d-flex flex-row align-content-center gap-2">
+            <small class="text-muted align-content-center">
+                @Model.Comment.CreatedAt.ToString("yyyy-MM-dd HH:mm")
+            </small>
+
+            @if (Model.Comment.IsHidden)
+            {
+                <small class="text-danger align-content-center">
+                    (Hidden)
+                </small>
+            }
+
+            @if (isAuthenticated)
+            {
+                <div class="d-flex justify-content-end">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-link text-muted"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                aria-label="Comment actions">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <button class="dropdown-item"
+                                        type="button"
+                                        onclick="Comments.toggleReport('@Model.Comment.Id', true)"
+                                        @(canReport ? "" : "disabled")>
+                                    <i class="bi bi-flag me-2"></i>
+                                    @(alreadyReported ? "Reported" : "Report")
+                                </button>
+                            </li>
+
+                            @if (isCommentator)
+                            {
+                                <li>
+                                    <button class="dropdown-item"
+                                            type="button"
+                                            onclick="Comments.toggleEdit('@Model.Comment.Id', true)">
+                                        <i class="bi bi-pencil me-2"></i>
+                                        Edit
+                                    </button>
+                                </li>
+
+                                <li>
+                                    <form asp-controller="Articles"
+                                            asp-action="DeleteComment"
+                                            asp-route-articleId="@Model.Comment.ArticleId"
+                                            asp-route-commentId="@Model.Comment.Id"
+                                            method="post"
+                                            data-comment-text="@Model.Comment.Text"
+                                            onsubmit="return Comments.confirmDelete(this)">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <button type="submit"
+                                                class="dropdown-item text-danger">
+                                            <i class="bi bi-trash me-2"></i>
+                                            Delete
+                                        </button>
+                                    </form>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="comment-display mt-0"
+         id="comment-display-@Model.Comment.Id-div"
+         style="white-space: pre-line;">
+        @Model.Comment.Text
+    </div>
+
+    @if (isCommentator)
+    {
+        <form asp-controller="Articles"
+              asp-action="UpdateComment"
+              asp-route-articleId="@Model.Comment.ArticleId"
+              asp-route-commentId="@Model.Comment.Id"
+              method="post"
+              class="d-none mt-2"
+              id="comment-edit-@Model.Comment.Id">
+
+            @Html.AntiForgeryToken()
+            <textarea id="comment-edit-@Model.Comment.Id-textarea"
+                  name="text"
+                  class="form-control mb-2"
+                  rows="3"
+                  required>@Model.Comment.Text</textarea>
+
+            <div class="d-flex justify-content-end gap-2">
+                <button type="button"
+                        class="btn btn-sm btn-outline-secondary"
+                        onclick="Comments.toggleEdit('@Model.Comment.Id', false)">
+                    Cancel
+                </button>
+
+                <button type="submit"
+                        class="btn btn-sm btn-primary">
+                    Save
+                </button>
+            </div>
+        </form>
+    }
+
+    @if (canReport)
+    {
+        <form asp-controller="Articles"
+            asp-action="ReportComment"
+            asp-route-articleId="@Model.Comment.ArticleId"
+            asp-route-commentId="@Model.Comment.Id"
+            method="post"
+            class="d-none mt-2"
+            id="comment-report-@Model.Comment.Id">
+
+            @Html.AntiForgeryToken()
+
+            <strong>Report comment</strong>
+
+            <div class="form-group mb-3">
+                <label for="report-reason-@Model.Comment.Id">Reason</label>
+                <select id="report-reason-@Model.Comment.Id"
+                        name="Reason"
+                        class="form-select"
+                        required>
+                    <option value="@ArticleCommentReportReason.Spam">Spam</option>
+                    <option value="@ArticleCommentReportReason.Harassment">Harassment</option>
+                    <option value="@ArticleCommentReportReason.HateSpeech">Hate speech</option>
+                    <option value="@ArticleCommentReportReason.SelfPromotion">Self promotion</option>
+                    <option value="@ArticleCommentReportReason.Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="report-description-@Model.Comment.Id">Description (optional)</label>
+                <textarea id="report-description-@Model.Comment.Id"
+                      name="Description"
+                      class="form-control"
+                      rows="3"
+                      maxlength="500"></textarea>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+                <button type="button"
+                        class="btn btn-sm btn-outline-secondary"
+                        onclick="Comments.toggleReport('@Model.Comment.Id', false)">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-sm btn-primary">
+                    Report
+                </button>
+            </div>
+        </form>
+    }
+</div>

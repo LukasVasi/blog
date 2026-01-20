@@ -1,0 +1,32 @@
+﻿@using Blog.MVC.ViewModels.Account;
+@model SendEmailAddressConfirmationViewModel;
+
+@{
+    ViewData["Title"] = "Send email address confirmation";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <p>Before using your account you must confirm your email address.</p>
+        <p>
+            If your confirmation is <strong>missing</strong>, has <strong>expired</strong> or if you have decided to use a <strong>different email address</strong>,
+            you can <strong>request a new email confirmation</strong> below.
+        </p>
+        <form method="post" asp-controller="Account" asp-action="SendEmailAddressConfirmation">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group mb-3">
+                <label asp-for="EmailAddress">Email address</label>
+                <input asp-for="EmailAddress" class="form-control" />
+                <span asp-validation-for="EmailAddress" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Send email address confirmation</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

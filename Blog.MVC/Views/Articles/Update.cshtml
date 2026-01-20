@@ -1,0 +1,37 @@
+﻿@using Blog.MVC.ViewModels.Articles;
+@model UpdateArticleViewModel;
+@{
+    ViewData["Title"] = "Edit article";
+}
+<h1>@ViewData["Title"]</h1>
+<div class="row">
+    <div class="col-md-12">
+        <form id="articleForm" method="post" asp-controller="Articles" asp-action="Update" asp-route-itemid=@Model.Id>
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Title">Title</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <partial name="_ArticleImageUploadFormPartial" for="Image" />
+
+            <div class="form-group mb-3">
+                <label asp-for="Text">Text</label>
+                <textarea asp-for="Text" class="form-control" rows="10"></textarea>
+                <span asp-validation-for="Text" class="text-danger"></span>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn btn-primary">Save changes</button>
+            <a asp-controller="Articles" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/image-upload-form.js"></script>
+}

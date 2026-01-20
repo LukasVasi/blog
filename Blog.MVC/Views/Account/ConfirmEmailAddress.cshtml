@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Confirm email address";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="text-danger">
+                @Html.ValidationSummary()
+            </div>
+            <p>You can send a new email address confirmation request <a asp-controller="Account" asp-action="SendEmailAddressConfirmation">here</a>.</p>
+        }
+        else
+        {
+            <p>Your email address has been confirmed successfully.</p>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
